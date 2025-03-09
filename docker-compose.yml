@@ -1,0 +1,89 @@
+services:
+  postgres-calendar-api:
+    image: postgres:latest
+    container_name: postgres-calendar-api
+    environment:
+      POSTGRES_USER: calendar
+      POSTGRES_PASSWORD: calendar
+      POSTGRES_DB: calendar
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./lna-calendar-api/init-db:/docker-entrypoint-initdb.d
+
+  postgres-session-api:
+    image: postgres:latest
+    container_name: postgres-session-api
+    environment:
+      POSTGRES_USER: session
+      POSTGRES_PASSWORD: session
+      POSTGRES_DB: session
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./lna-session-api/init-db:/docker-entrypoint-initdb.d
+
+  
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_management load_definitions \"/etc/rabbitmq/definitions.json\""
+    volumes:
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+
+
+  deepseek:
+    image: deepseekai/deepseek:latest
+    container_name: deepseek-llm
+    ports:
+      - "8000:8000" # Możesz zmienić port, jeśli jest zajęty
+    volumes:
+      - ./models:/models  # Folder na modele
+    environment:
+      - MODEL_NAME=deepseek-7b  # Możesz zmienić na inny model, np. deepseek-1.5b
+      - API_PORT=8000
+      - CUDA_VISIBLE_DEVICES=0  # Ustawienie GPU, zmień na "" jeśli chcesz używać CPU
+    restart: unless-stopped
+#  etcd:
+#    image: quay.io/coreos/etcd:v3.5.5
+#    container_name: etcd
+#    environment:
+#      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+#      ETCD_ADVERTISE_CLIENT_URLS: http://etcd:2379
+#    ports:
+#      - "2379:2379"
+#
+#  minio:
+#    image: minio/minio:latest
+#    container_name: minio
+#    command: server /data
+#    environment:
+#      MINIO_ROOT_USER: minioadmin
+#      MINIO_ROOT_PASSWORD: minioadmin
+#    ports:
+#      - "9000:9000"
+#    volumes:
+#      - ./minio-data:/data
+#
+#  milvus-standalone:
+#    container_name: milvus-standalone
+#    image: milvusdb/milvus:latest
+#    command: [ "milvus", "run", "standalone" ]
+#    ports:
+#      - "19530:19530"
+#      - "9091:9091"
+#    environment:
+#      ETCD_ENDPOINTS: etcd:2379
+#      MINIO_ADDRESS: minio:9000
+#    volumes:
+#      - ./milvus-data:/var/lib/milvus
+#    depends_on:
+#      - etcd
+#      - minio
