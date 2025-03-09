@@ -8,8 +8,8 @@ services:
       POSTGRES_DB: calendar
     ports:
       - "5432:5432"
-    volumes:
-      - ./lna-calendar-api/init-db:/docker-entrypoint-initdb.d
+    # volumes:
+    #   - ./lna-calendar-api/init-db:/docker-entrypoint-initdb.d
 
   postgres-session-api:
     image: postgres:latest
@@ -20,8 +20,8 @@ services:
       POSTGRES_DB: session
     ports:
       - "5433:5432"
-    volumes:
-      - ./lna-session-api/init-db:/docker-entrypoint-initdb.d
+    # volumes:
+    #   - ./lna-session-api/init-db:/docker-entrypoint-initdb.d
 
   
   rabbitmq:
