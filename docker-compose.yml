@@ -39,18 +39,7 @@ services:
       - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
 
 
-  deepseek:
-    image: deepseekai/deepseek:latest
-    container_name: deepseek-llm
-    ports:
-      - "8000:8000" # Możesz zmienić port, jeśli jest zajęty
-    volumes:
-      - ./models:/models  # Folder na modele
-    environment:
-      - MODEL_NAME=deepseek-7b  # Możesz zmienić na inny model, np. deepseek-1.5b
-      - API_PORT=8000
-      - CUDA_VISIBLE_DEVICES=0  # Ustawienie GPU, zmień na "" jeśli chcesz używać CPU
-    restart: unless-stopped
+
 #  etcd:
 #    image: quay.io/coreos/etcd:v3.5.5
 #    container_name: etcd
